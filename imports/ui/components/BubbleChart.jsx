@@ -3,7 +3,7 @@ import * as d3 from "d3";
 import _ from "underscore";
 import { numberWithCommas } from "../utils/numbers";
 
-const BLOCK_EXPLORER_URL = "https://nanocrawler.cc/explorer/block/";
+const BLOCK_EXPLORER_URL = "https://www.nanolooker.com/block/";
 
 class BubbleChart extends React.Component {
   static defaultProps = {

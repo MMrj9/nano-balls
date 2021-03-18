@@ -3,7 +3,7 @@ import { w3cwebsocket as W3CWebSocket } from "websocket";
 import _ from "underscore";
 import { rawToMega } from "nano-unit-converter";
 
-const BLOCK_EXPLORER_URL = "https://nanocrawler.cc/explorer/block/";
+const BLOCK_EXPLORER_URL = "https://www.nanolooker.com/block/";
 
 const LIFE_TIME = 60000;
 const MIN_RADIUS = 10;
