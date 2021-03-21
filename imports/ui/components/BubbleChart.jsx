@@ -2,6 +2,7 @@ import React from "react";
 import * as d3 from "d3";
 import _ from "underscore";
 import { numberWithCommas } from "../utils/numbers";
+import Loading from "./Loading";
 
 const BLOCK_EXPLORER_URL = "https://www.nanolooker.com/block/";
 
@@ -37,9 +38,11 @@ class BubbleChart extends React.Component {
   componentWillMount() {
     this.mounted = true;
     window.addEventListener("resize", () => {
-      const width = this.container.current.offsetWidth;
-      this.setState({ lastGenerateRun: new Date(), width });
-      this.generateChart();
+      if (this.container?.current) {
+        const width = this.container.current.offsetWidth;
+        this.setState({ lastGenerateRun: new Date(), width });
+        this.generateChart();
+      }
     });
   }
 
@@ -191,7 +194,7 @@ class BubbleChart extends React.Component {
     return (
       <div className="chart" ref={this.container}>
         <svg width={width} height={height}>
-          {!loading && this.renderBubbles(data)}
+          {loading ? <Loading /> : this.renderBubbles(data)}
         </svg>
       </div>
     );

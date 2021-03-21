@@ -2,6 +2,7 @@ import React from "react";
 import { w3cwebsocket as W3CWebSocket } from "websocket";
 import _ from "underscore";
 import { rawToMega } from "nano-unit-converter";
+import Loading from "./Loading";
 
 const BLOCK_EXPLORER_URL = "https://www.nanolooker.com/block/";
 
@@ -269,12 +270,7 @@ class Bubbles extends React.Component {
         <svg width={width} height={height}>
           {bubbles.length > 0 && this.renderBubbles()}
         </svg>
-        {loading && (
-          <div className="loading-bubbles">
-            <img src="images/loading.gif" />
-            <span>Waiting for transactions</span>
-          </div>
-        )}
+        {loading && <Loading />}
       </div>
     );
   }

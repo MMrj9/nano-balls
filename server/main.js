@@ -43,7 +43,7 @@ Meteor.methods({
         { $group: { _id: null, avg: { $avg: "$amountNano" } } },
       ])
       .toArray();
-    return result[0].avg;
+    if (result && result[0]) return result[0].avg;
   },
 });
 
