@@ -196,7 +196,7 @@ class BubbleChart extends React.Component {
         <svg width={width} height={height}>
           {!loading && this.renderBubbles(data)}
         </svg>
-        {loading && <Loading />}
+        {loading && <Loading text="Fetching data" />}
       </div>
     );
   }

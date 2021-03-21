@@ -270,7 +270,7 @@ class Bubbles extends React.Component {
         <svg width={width} height={height}>
           {bubbles.length > 0 && this.renderBubbles()}
         </svg>
-        {loading && <Loading />}
+        {loading && <Loading text="Waiting for transactions" />}
       </div>
     );
   }

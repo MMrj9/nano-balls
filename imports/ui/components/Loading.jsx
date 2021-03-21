@@ -1,8 +1,8 @@
 import React from "react";
 
-export default Loading = () => (
+export default Loading = ({ text }) => (
   <div className="loading-bubbles">
     <img src="images/loading.gif" />
-    <span>Waiting for transactions</span>
+    <span>{text}</span>
   </div>
 );
