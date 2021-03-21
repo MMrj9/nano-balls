@@ -69,11 +69,11 @@ const transactionDTO = (rawTransaction) => {
   return transaction;
 };
 
-const clearOldData = () => {
+const clearOldData = Meteor.bindEnvironment(() => {
   const oneDayAgo = new Date();
   oneDayAgo.setHours(oneDayAgo.getHours() - 24);
   TransactionsCollection.remove({ createdAt: { $lt: oneDayAgo } });
-};
+});
 
 Meteor.publish("largestTransactions", (hours, limit) => {
   const begin = new Date();

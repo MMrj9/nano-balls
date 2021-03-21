@@ -18,9 +18,9 @@ export default Info = (props) => {
         <img src="images/nano-logo.png" className="nano-logo" />
         <h1>NANO Bubbles</h1>
         <p>
-          Visualize NANO network transactions using bubbles. Use the ALL mode to
-          view all nano transactions. In LARGEST mode you will only see the
-          largest sent transactions. Both visualizations are updated in real
+          Visualize NANO network transactions using bubbles. Use the [ALL] mode
+          to view all nano transactions. In the [LARGEST] mode you will only see
+          the largest sent transactions. Both visualizations are updated in real
           time and have parameters that can be configured.
         </p>
         <div className="configuration">
@@ -41,7 +41,7 @@ export default Info = (props) => {
                   mode === "LARGEST" ? "active" : "inactive"
                 }`}
               >
-                Largest TX
+                Largest TXs
               </div>
             </div>
           </div>

@@ -53,6 +53,10 @@ text:hover {
   box-shadow: 1px 1px 6px;
 }
 
+.info-card > p {
+  text-align: justify;
+}
+
 .nano-logo {
   max-width: 100px;
 }
@@ -71,7 +75,7 @@ text:hover {
 }
 
 .mode-selection {
-  width: 220px;
+  width: 240px;
   border-radius: 5px;
 }
 

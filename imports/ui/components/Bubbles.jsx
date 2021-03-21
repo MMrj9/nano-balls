@@ -59,6 +59,7 @@ class Bubbles extends React.Component {
     this.interval = null;
     this.refreshAverageInterval = null;
     this.client = null;
+    this.runningTransform = false;
   }
 
   componentDidMount() {
@@ -82,7 +83,10 @@ class Bubbles extends React.Component {
         }
       };
       const { speed } = this.props;
-      this.interval = setInterval(() => this.transformBubbles(), 100 - speed);
+      this.interval = setInterval(
+        () => !this.runningTransform && this.transformBubbles(),
+        100 - speed
+      );
       this.refreshAverageInterval = setInterval(
         () => this.refreshAverage(),
         REFRESH_AVERAGE_INTERVAL
@@ -157,6 +161,7 @@ class Bubbles extends React.Component {
   }
 
   transformBubbles() {
+    this.runningTransform = true;
     const { bubbles } = this.state;
     const updatedBubbles = [...bubbles];
     updatedBubbles.forEach((bubble, index) => {
@@ -170,17 +175,19 @@ class Bubbles extends React.Component {
       }
       if (bubble.r < -1) {
         updatedBubbles.splice(index, 1);
-      }
-      const newDirection = this.generateNewDirection(bubble);
-      if (newDirection) {
-        bubble = { ...bubble, ...newDirection };
       } else {
-        bubble.x += bubble.dX;
-        bubble.y += bubble.dY;
+        const newDirection = this.generateNewDirection(bubble);
+        if (newDirection) {
+          bubble = { ...bubble, ...newDirection };
+        } else {
+          bubble.x += bubble.dX;
+          bubble.y += bubble.dY;
+        }
+        updatedBubbles[index] = bubble;
       }
-      updatedBubbles[index] = bubble;
     });
     this.setState({ bubbles: updatedBubbles });
+    this.runningTransform = false;
   }
 
   generateXPos() {
@@ -233,6 +240,7 @@ class Bubbles extends React.Component {
 
   renderBubbles() {
     const { bubbles } = this.state;
+    console.log("bubbles.length", bubbles.length);
     return bubbles.map((bubble, index) => {
       const lifeTime = new Date().getTime() - bubble.createdAt.getTime();
       if (lifeTime > 3000) {
