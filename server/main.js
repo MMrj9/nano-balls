@@ -6,6 +6,7 @@ import { rawToMega } from "nano-unit-converter";
 Meteor.startup(() => {
   const ws = new WebSocket("wss://ws.mynano.ninja/");
 
+  //Websocket events
   ws.on("open", function open() {
     const subscribeMessage = {
       action: "subscribe",
@@ -31,6 +32,10 @@ Meteor.startup(() => {
   ws.on("close", (err) => {
     console.log("Websocket disconnected", err);
   });
+
+  //Clear old data
+  clearOldData();
+  setInterval(() => clearOldData(), 3600000);
 });
 
 Meteor.methods({
@@ -62,6 +67,12 @@ const transactionDTO = (rawTransaction) => {
     createdAt: new Date(),
   };
   return transaction;
+};
+
+const clearOldData = () => {
+  const oneDayAgo = new Date();
+  oneDayAgo.setHours(oneDayAgo.getHours() - 24);
+  TransactionsCollection.remove({ createdAt: { $lt: oneDayAgo } });
 };
 
 Meteor.publish("largestTransactions", (hours, limit) => {
