@@ -1,1 +1,9 @@
-# nano-bubbles
+# Nano Bubbles - NANO Network Transaction Visualizer
+
+Avaiblable @ [nanobubbles.xyz](https://nanobubbles.xyz)
+
+## Run it locally
+
+1.  Install [meteorjs](https://www.meteor.com/)
+2.  Clone repo
+3.  Run npm i && npm start
