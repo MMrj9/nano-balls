@@ -11,6 +11,8 @@ export default Info = (props) => {
     setLimit,
     speed,
     setSpeed,
+    showAll,
+    setShowAll,
   } = props;
   return (
     <div className="info">
@@ -18,10 +20,11 @@ export default Info = (props) => {
         <img src="images/nano-logo.png" className="nano-logo" />
         <h1>NANO Bubbles</h1>
         <p>
-          Visualize NANO network transactions using bubbles. Use the [ALL] mode
-          to view all nano transactions. In the [LARGEST] mode you will only see
-          the largest sent transactions. Both visualizations are updated in real
-          time and have parameters that can be configured.
+          Bubbles are a great way to visualize NANO network transaction stats.
+          Use the [ALL] mode to view all nano transactions. In the [LARGEST]
+          mode you will only see the largest sent transactions. Both
+          visualizations are updated in real-time and have a configuration
+          parameters.
         </p>
         <div className="configuration">
           <div className="mode">
@@ -32,7 +35,7 @@ export default Info = (props) => {
                   mode === "ALL" ? "active" : "inactive"
                 }`}
               >
-                TX Rate
+                Transaction Rate
               </div>
               <div className="mode-select-separator"></div>
               <div
@@ -41,7 +44,7 @@ export default Info = (props) => {
                   mode === "LARGEST" ? "active" : "inactive"
                 }`}
               >
-                Largest TXs
+                Largest Transactions
               </div>
             </div>
           </div>
@@ -86,7 +89,7 @@ export default Info = (props) => {
             </div>
           )}
           {mode === "ALL" && (
-            <div className="params">
+            <div className="params column">
               <div>
                 <h3>Speed</h3>
                 <input
@@ -97,6 +100,21 @@ export default Info = (props) => {
                   value={speed}
                   onChange={(e) => setSpeed(e.target.value)}
                 />
+              </div>
+              <div>
+                <h3>Filter</h3>
+                <div className="flex" style={{ width: 400 }}>
+                  <RadioButton
+                    label="Show All"
+                    checked={showAll}
+                    onChange={() => setShowAll(true)}
+                  />
+                  <RadioButton
+                    label="Show >= 1 NANO"
+                    checked={!showAll}
+                    onChange={() => setShowAll(false)}
+                  />
+                </div>
               </div>
             </div>
           )}

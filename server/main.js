@@ -40,13 +40,8 @@ Meteor.startup(() => {
 
 Meteor.methods({
   getTransactionsAmountAverage: async () => {
-    const begin = new Date();
-    begin.setHours(new Date().getHours() - 1);
     const result = await TransactionsCollection.rawCollection()
-      .aggregate([
-        { $match: { createdAt: { $gt: begin } } },
-        { $group: { _id: null, avg: { $avg: "$amountNano" } } },
-      ])
+      .aggregate([{ $group: { _id: null, avg: { $avg: "$amountNano" } } }])
       .toArray();
     if (result && result[0]) return result[0].avg;
   },

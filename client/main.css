@@ -15,6 +15,10 @@ h1 {
   display: flex;
 }
 
+.column {
+  flex-direction: column;
+}
+
 .flex-column {
   flex-direction: column;
 }
@@ -64,6 +68,7 @@ text:hover {
 .configuration {
   display: flex;
   flex-direction: column;
+  margin-top: 20px;
 }
 
 .mode {
@@ -75,7 +80,7 @@ text:hover {
 }
 
 .mode-selection {
-  width: 240px;
+  width: 380px;
   border-radius: 5px;
 }
 
@@ -151,6 +156,9 @@ text:hover {
   #nano-address {
     display: none;
   }
+  .mode-selection {
+    width: 240px;
+  }
 }
 
 .loading-bubbles {
@@ -184,11 +192,12 @@ text:hover {
 /* Customize the label (the container) */
 .container {
   display: flex;
+  flex: 1;
   position: relative;
   padding-left: 35px;
   margin-bottom: 12px;
   cursor: pointer;
-  font-size: 22px;
+  font-size: 20px;
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
@@ -202,11 +211,6 @@ text:hover {
   cursor: pointer;
   height: 0;
   width: 0;
-}
-
-/* Label Text Style */
-.container > .label {
-  width: 80px;
 }
 
 /* Create a custom radio button */

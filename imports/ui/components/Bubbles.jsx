@@ -6,24 +6,19 @@ import Loading from "./Loading";
 
 const BLOCK_EXPLORER_URL = "https://www.nanolooker.com/block/";
 
-const LIFE_TIME = 60000;
-const MIN_RADIUS = 10;
+const LIFE_TIME = 30000;
 const INITIAL_RADIUS = 5;
 const DIRECTIONS = [-1, 1];
 const REFRESH_AVERAGE_INTERVAL = 60000;
 const MAX_BUBBLES = 65;
+const MIN_RADIUS = 10;
+const NANO_TO_RAW = 1000000000000000000000000000000;
 
 const getRadiusIncrement = (r1, r2) => {
   const radiusDiff = Math.abs(r2 - r1);
   if (radiusDiff > 10) return 1;
-  else if (radiusDiff > 20) return 2;
-  else if (radiusDiff > 30) return 3;
-  else if (radiusDiff > 40) return 4;
-  else if (radiusDiff > 50) return 5;
-  else if (radiusDiff > 60) return 6;
-  else if (radiusDiff > 70) return 7;
-  else if (radiusDiff > 80) return 8;
-  else if (radiusDiff > 90) return 9;
+  else if (radiusDiff > 50) return 2;
+  else if (radiusDiff > 100) return 3;
   else return 0.5;
 };
 
@@ -52,7 +47,6 @@ class Bubbles extends React.Component {
         bottom: 0,
         left: 0,
       },
-      loading: true,
     };
 
     this.container = React.createRef();
@@ -64,6 +58,7 @@ class Bubbles extends React.Component {
 
   componentDidMount() {
     Meteor.call("getTransactionsAmountAverage", (error, average) => {
+      console.log("average", average);
       this.setState({ average });
       this.client = new W3CWebSocket("wss://ws.mynano.ninja/");
       this.client.onopen = () => {
@@ -104,7 +99,7 @@ class Bubbles extends React.Component {
   }
 
   componentDidUpdate(prevProps) {
-    const { width } = this.state;
+    const { width, bubbles } = this.state;
     const refreshDivSizeAndBoundaries = () => {
       const width = this.container.current?.offsetWidth;
       const svgBoundingRect = this.container.current?.getBoundingClientRect();
@@ -118,25 +113,38 @@ class Bubbles extends React.Component {
         this.setState({ width, boundaries });
       }
     };
-    if (isNaN(width)) refreshDivSizeAndBoundaries();
-    window.addEventListener("resize", () => refreshDivSizeAndBoundaries());
+    if (isNaN(width)) {
+      refreshDivSizeAndBoundaries();
+      window.addEventListener("resize", () => refreshDivSizeAndBoundaries());
+    }
 
-    const { speed } = this.props;
+    const { speed, showAll } = this.props;
     if (prevProps.speed !== speed) {
       clearInterval(this.interval);
       this.interval = setInterval(() => this.transformBubbles(), 100 - speed);
+    }
+
+    //Clear bubbles under 1 NANO
+    if (prevProps.showAll && !showAll) {
+      const updatedBubbles = [];
+      bubbles.forEach((bubble) => {
+        if (bubble.amount >= NANO_TO_RAW) updatedBubbles.push(bubble);
+      });
+      this.setState({ bubbles: updatedBubbles });
     }
   }
 
   refreshAverage() {
     Meteor.call("getTransactionsAmountAverage", (error, average) => {
-      this.setState({ average });
+      if (average) this.setState({ average });
     });
   }
 
   generateBubble(data) {
+    const { showAll } = this.props;
     const { bubbles } = this.state;
     const amount = data.amount;
+    if (!showAll && amount < NANO_TO_RAW) return;
     const newBubble = {
       id: data.hash,
       x: this.generateXPos(),
@@ -146,18 +154,21 @@ class Bubbles extends React.Component {
       dX: getRandomDirection(),
       dY: getRandomDirection(),
       createdAt: new Date(),
+      amount: amount,
       kill: false,
     };
     bubbles.push(newBubble);
     if (bubbles.length >= MAX_BUBBLES) {
+      let bubblesToKill = MAX_BUBBLES - bubbles.length;
       bubbles.some((bubble, index) => {
         if (!bubble.kill) {
           bubbles[index].kill = true;
-          return true;
         }
+        bubblesToKill -= 1;
+        if (bubblesToKill === 0) return true;
       });
     }
-    this.setState({ bubbles, loading: false });
+    this.setState({ bubbles });
   }
 
   transformBubbles() {
@@ -240,7 +251,6 @@ class Bubbles extends React.Component {
 
   renderBubbles() {
     const { bubbles } = this.state;
-    console.log("bubbles.length", bubbles.length);
     return bubbles.map((bubble, index) => {
       const lifeTime = new Date().getTime() - bubble.createdAt.getTime();
       if (lifeTime > 3000) {
@@ -272,13 +282,13 @@ class Bubbles extends React.Component {
   }
 
   render() {
-    const { width, height, loading, bubbles } = this.state;
+    const { width, height, bubbles } = this.state;
     return (
       <div className="bubbles" ref={this.container}>
         <svg width={width} height={height}>
           {bubbles.length > 0 && this.renderBubbles()}
         </svg>
-        {loading && <Loading text="Waiting for transactions" />}
+        {bubbles.length <= 0 && <Loading text="Waiting for transactions" />}
       </div>
     );
   }

@@ -8,6 +8,7 @@ export const App = () => {
   const [timePeriod, setTimePeriod] = useState(24);
   const [limit, setLimit] = useState(50);
   const [speed, setSpeed] = useState(50);
+  const [showAll, setShowAll] = useState(true);
 
   const loadingBubbleChart = useTracker(() => {
     if (mode === "LARGEST") {
@@ -33,8 +34,10 @@ export const App = () => {
           setLimit={setLimit}
           speed={speed}
           setSpeed={setSpeed}
+          showAll={showAll}
+          setShowAll={setShowAll}
         />
-        {mode === "ALL" && <Bubbles speed={speed} />}
+        {mode === "ALL" && <Bubbles speed={speed} showAll={showAll} />}
         {mode === "LARGEST" && (
           <BubbleChart
             data={generateChartData(largestTransactions)}
