@@ -21,10 +21,10 @@ export default Info = (props) => {
         <h1>NANO Bubbles</h1>
         <p>
           Bubbles are a great way to visualize NANO network transaction stats.
-          Use the [ALL] mode to view all nano transactions. In the [LARGEST]
-          mode you will only see the largest sent transactions. Both
-          visualizations are updated in real-time and have a configuration
-          parameters.
+          Use the [ALL] mode to view all nano transactions as moving bubbles. In
+          the [LARGEST] mode you will see the largest sent transactions
+          represented in a bubble chart. Both visualizations are updated in
+          real-time and have a configuration parameters.
         </p>
         <div className="configuration">
           <div className="mode">

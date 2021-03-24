@@ -12,6 +12,7 @@ const DIRECTIONS = [-1, 1];
 const REFRESH_AVERAGE_INTERVAL = 60000;
 const MAX_BUBBLES = 65;
 const MIN_RADIUS = 10;
+const MAX_RADIUS = 400;
 const NANO_TO_RAW = 1000000000000000000000000000000;
 
 const getRadiusIncrement = (r1, r2) => {
@@ -53,12 +54,12 @@ class Bubbles extends React.Component {
     this.interval = null;
     this.refreshAverageInterval = null;
     this.client = null;
-    this.runningTransform = false;
+    this.isMutating = false;
+    this.largestTransactionAmount = props.largestTransactionAmount;
   }
 
   componentDidMount() {
     Meteor.call("getTransactionsAmountAverage", (error, average) => {
-      console.log("average", average);
       this.setState({ average });
       this.client = new W3CWebSocket("wss://ws.mynano.ninja/");
       this.client.onopen = () => {
@@ -79,7 +80,7 @@ class Bubbles extends React.Component {
       };
       const { speed } = this.props;
       this.interval = setInterval(
-        () => !this.runningTransform && this.transformBubbles(),
+        () => !this.isMutating && this.transformBubbles(),
         100 - speed
       );
       this.refreshAverageInterval = setInterval(
@@ -118,7 +119,7 @@ class Bubbles extends React.Component {
       window.addEventListener("resize", () => refreshDivSizeAndBoundaries());
     }
 
-    const { speed, showAll } = this.props;
+    const { speed, showAll, largestTransactionAmount } = this.props;
     if (prevProps.speed !== speed) {
       clearInterval(this.interval);
       this.interval = setInterval(() => this.transformBubbles(), 100 - speed);
@@ -132,6 +133,13 @@ class Bubbles extends React.Component {
       });
       this.setState({ bubbles: updatedBubbles });
     }
+
+    //Set this.largestTransactionAmount
+    if (
+      largestTransactionAmount &&
+      this.largestTransactionAmount !== largestTransactionAmount
+    )
+      this.largestTransactionAmount = largestTransactionAmount;
   }
 
   refreshAverage() {
@@ -141,12 +149,17 @@ class Bubbles extends React.Component {
   }
 
   generateBubble(data) {
+    this.isMutating = true;
     const { showAll } = this.props;
     const { bubbles } = this.state;
     const amount = data.amount;
-    if (!showAll && amount < NANO_TO_RAW) return;
+    if (!showAll && amount < NANO_TO_RAW) {
+      this.isMutating = false;
+      return;
+    }
     const newBubble = {
       id: data.hash,
+      subtype: data.block.subtype,
       x: this.generateXPos(),
       y: this.generateYPos(),
       r: INITIAL_RADIUS,
@@ -159,20 +172,21 @@ class Bubbles extends React.Component {
     };
     bubbles.push(newBubble);
     if (bubbles.length >= MAX_BUBBLES) {
-      let bubblesToKill = MAX_BUBBLES - bubbles.length;
+      let bubblesToKill = bubbles.length - MAX_BUBBLES;
       bubbles.some((bubble, index) => {
         if (!bubble.kill) {
           bubbles[index].kill = true;
         }
         bubblesToKill -= 1;
-        if (bubblesToKill === 0) return true;
+        if (bubblesToKill <= 0) return true;
       });
     }
     this.setState({ bubbles });
+    this.isMutating = false;
   }
 
   transformBubbles() {
-    this.runningTransform = true;
+    this.isMutating = true;
     const { bubbles } = this.state;
     const updatedBubbles = [...bubbles];
     updatedBubbles.forEach((bubble, index) => {
@@ -198,7 +212,7 @@ class Bubbles extends React.Component {
       }
     });
     this.setState({ bubbles: updatedBubbles });
-    this.runningTransform = false;
+    this.isMutating = false;
   }
 
   generateXPos() {
@@ -217,10 +231,10 @@ class Bubbles extends React.Component {
 
   generateRadius(amount) {
     const { average } = this.state;
-    const min = 0;
-    const range = (amount - min) / (average - min);
-    if (range < MIN_RADIUS) return MIN_RADIUS;
-    return range;
+    let radius = (amount * MAX_RADIUS) / this.largestTransactionAmount;
+    if (radius < MIN_RADIUS) radius = MIN_RADIUS;
+    if (amount >= average && radius < MIN_RADIUS * 2) return MIN_RADIUS * 2;
+    return radius;
   }
 
   generateNewDirection(bubble) {
@@ -272,7 +286,7 @@ class Bubbles extends React.Component {
               r={bubble.r}
               cx={bubble.x}
               cy={bubble.y}
-              fill={"#111456"}
+              fill={bubble.subtype === "send" ? "#111456" : "#1e2396"}
               stroke={"#fff"}
               strokeWidth="2"
             ></circle>
