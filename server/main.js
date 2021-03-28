@@ -4,7 +4,7 @@ import { TransactionsCollection } from "../imports/api/transactions";
 import { rawToMega } from "nano-unit-converter";
 
 Meteor.startup(() => {
-  const ws = new WebSocket("wss://ws.mynano.ninja/");
+  let ws = new WebSocket("wss://ws.mynano.ninja/");
 
   //Websocket events
   ws.on("open", function open() {
@@ -31,6 +31,7 @@ Meteor.startup(() => {
 
   ws.on("close", (err) => {
     console.log("Websocket disconnected", err);
+    ws = new WebSocket("wss://ws.mynano.ninja/");
   });
 
   //Clear old data
