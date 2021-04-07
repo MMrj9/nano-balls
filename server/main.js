@@ -29,10 +29,20 @@ Meteor.startup(() => {
     })
   );
 
-  ws.on("close", (err) => {
-    console.log("Websocket disconnected", err);
-    ws = new WebSocket("wss://ws.mynano.ninja/");
-  });
+  ws.onclose = (e) => {
+    console.log(
+      "Socket is closed. Reconnect will be attempted in 1 second.",
+      e.reason
+    );
+    setTimeout(function () {
+      connect();
+    }, 1000);
+  };
+
+  ws.onerror = (err) => {
+    console.error("Socket encountered error: ", err.message, "Closing socket");
+    ws.close();
+  };
 
   //Clear old data
   clearOldData();

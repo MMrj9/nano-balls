@@ -63,7 +63,7 @@ export default Info = (props) => {
                   onChange={() => setTimePeriod(12)}
                 />
                 <RadioButton
-                  label="1h"
+                  label="01h"
                   checked={timePeriod === 1}
                   onChange={() => setTimePeriod(1)}
                 />
