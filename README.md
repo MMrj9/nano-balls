@@ -1,6 +1,6 @@
 # Nano Bubbles - NANO Network Transaction Visualizer
 
-Available @ [nanobubbles.xyz](https://nanobubbles.xyz)
+Available @ [nanobubbles.xyz](https://nanobubbles.xyz) (soon)
 
 ## Run it locally
 
