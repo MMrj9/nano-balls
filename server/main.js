@@ -4,14 +4,14 @@ import { TransactionsCollection } from "../imports/api/transactions";
 import { rawToMega } from "nano-unit-converter";
 
 Meteor.startup(() => {
-  let ws = new WebSocket("wss://ws.mynano.ninja/");
+  let ws = new WebSocket("wss://ws.powernode.cc/");
 
   //Websocket events
   ws.on("open", function open() {
     const subscribeMessage = {
-      action: "subscribe",
-      topic: "confirmation",
-      ack: true,
+      "action": "subscribe",
+      "topic": "confirmation",
+      "ack": true,
     };
     ws.send(JSON.stringify(subscribeMessage));
   });

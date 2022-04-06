@@ -61,7 +61,7 @@ class Bubbles extends React.Component {
   componentDidMount() {
     Meteor.call("getTransactionsAmountAverage", (error, average) => {
       this.setState({ average });
-      this.client = new W3CWebSocket("wss://ws.mynano.ninja/");
+      this.client = new W3CWebSocket("wss://ws.powernode.cc/");
       this.client.onopen = () => {
         const subscribeMessage = {
           action: "subscribe",
