@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useTracker } from "meteor/react-meteor-data";
 import { TransactionsCollection } from "../api/transactions";
-import { BubbleChart, Bubbles, Info } from "./components";
+import { BallChart, Balls, Info } from "./components";
 
 const DEFAULT_LARGEST_TRANSACTION_AMOUNT = 1000;
 
@@ -12,7 +12,7 @@ export const App = () => {
   const [speed, setSpeed] = useState(50);
   const [showAll, setShowAll] = useState(true);
 
-  const loadingBubbleChart = useTracker(() => {
+  const loadingBallChart = useTracker(() => {
     const handle = Meteor.subscribe("largestTransactions", timePeriod, limit);
     return !handle.ready();
   }, [timePeriod, limit, mode]);
@@ -38,7 +38,7 @@ export const App = () => {
           setShowAll={setShowAll}
         />
         {mode === "ALL" && (
-          <Bubbles
+          <Balls
             speed={speed}
             showAll={showAll}
             largestTransactionAmount={
@@ -49,11 +49,11 @@ export const App = () => {
           />
         )}
         {mode === "LARGEST" && (
-          <BubbleChart
+          <BallChart
             data={generateChartData(largestTransactions)}
             timePeriod={timePeriod}
             limit={limit}
-            loading={loadingBubbleChart}
+            loading={loadingBallChart}
           />
         )}
         <div id="nano-address">

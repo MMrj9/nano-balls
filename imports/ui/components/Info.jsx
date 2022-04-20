@@ -18,12 +18,12 @@ export default Info = (props) => {
     <div className="info">
       <div className="info-card">
         <img src="images/nano-logo.png" className="nano-logo" />
-        <h1>NANO Bubbles</h1>
+        <h1>NANO Balls</h1>
         <p>
-          Bubbles are a great way to visualize NANO network transaction stats.
-          Use the [ALL] mode to view all nano transactions as moving bubbles. In
+          Balls are a great way to visualize NANO network transaction stats.
+          Use the [ALL] mode to view all nano transactions as moving balls. In
           the [LARGEST] mode you will see the largest sent transactions
-          represented in a bubble chart. Both visualizations are updated in
+          represented in a ball chart. Both visualizations are updated in
           real-time and have a configuration parameters.
         </p>
         <div className="configuration">
@@ -126,7 +126,7 @@ export default Info = (props) => {
           >
             <img src="./icons/donate.svg" alt="Donate Nano" />
           </a>
-          <a href="https://github.com/MMrj9/nano-bubbles" target="_blank">
+          <a href="https://github.com/MMrj9/nano-balls" target="_blank">
             <img src="./icons/github.svg" alt="Github" />
           </a>
         </div>

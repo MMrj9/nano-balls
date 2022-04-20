@@ -37,7 +37,7 @@ text:hover {
 }
 
 .chart,
-.bubbles {
+.balls {
   flex: 2;
   background-color: #000;
   position: relative;
@@ -57,9 +57,7 @@ text:hover {
   box-shadow: 1px 1px 6px;
 }
 
-.info-card > p {
-  text-align: justify;
-}
+.info-card > p {}
 
 .nano-logo {
   max-width: 100px;
@@ -147,7 +145,7 @@ text:hover {
   .chart {
     width: 100%;
   }
-  .bubbles {
+  .balls {
     width: 100%;
   }
   .content {
@@ -161,7 +159,7 @@ text:hover {
   }
 }
 
-.loading-bubbles {
+.loading-balls {
   position: absolute;
   display: flex;
   flex-direction: column;
@@ -179,13 +177,13 @@ text:hover {
   margin-bottom: auto;
 }
 
-.loading-bubbles > img {
+.loading-balls > img {
   height: 64px;
   width: 64px;
   margin-bottom: 10px;
 }
 
-.loading-bubbles > span {
+.loading-balls > span {
   color: #eeeeee;
 }
 

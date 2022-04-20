@@ -6,7 +6,7 @@ import Loading from "./Loading";
 
 const BLOCK_EXPLORER_URL = "https://www.nanolooker.com/block/";
 
-class BubbleChart extends React.Component {
+class BallChart extends React.Component {
   static defaultProps = {
     data: [],
   };
@@ -30,7 +30,7 @@ class BubbleChart extends React.Component {
 
     this.radiusScale = this.radiusScale.bind(this);
     this.simulatePositions = this.simulatePositions.bind(this);
-    this.renderBubbles = this.renderBubbles.bind(this);
+    this.renderBalls = this.renderBalls.bind(this);
 
     this.container = React.createRef();
   }
@@ -135,7 +135,7 @@ class BubbleChart extends React.Component {
       });
   };
 
-  renderBubbles = (data) => {
+  renderBalls = (data) => {
     const minValue = d3.min(data, (item) => {
       return item.v;
     });
@@ -194,11 +194,11 @@ class BubbleChart extends React.Component {
     return (
       <div className="chart" ref={this.container}>
         <svg width={width} height={height}>
-          {!loading && this.renderBubbles(data)}
+          {!loading && this.renderBalls(data)}
         </svg>
         {loading && <Loading text="Fetching data" />}
       </div>
     );
   }
 }
-export default BubbleChart;
+export default BallChart;

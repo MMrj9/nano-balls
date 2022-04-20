@@ -10,7 +10,7 @@ const LIFE_TIME = 30000;
 const INITIAL_RADIUS = 5;
 const DIRECTIONS = [-1, 1];
 const REFRESH_AVERAGE_INTERVAL = 60000;
-const MAX_BUBBLES = 65;
+const MAX_BALLS = 65;
 const MIN_RADIUS = 10;
 const MAX_RADIUS = 400;
 const NANO_TO_RAW = 1000000000000000000000000000000;
@@ -27,7 +27,7 @@ const getRandomDirection = () => {
   return DIRECTIONS[Math.floor(Math.random() * DIRECTIONS.length)];
 };
 
-class Bubbles extends React.Component {
+class Balls extends React.Component {
   static defaultProps = {
     data: [],
   };
@@ -37,7 +37,7 @@ class Bubbles extends React.Component {
 
     this.state = {
       data: [],
-      bubbles: [],
+      balls: [],
       width: "100%",
       height: window.innerHeight,
       tick: new Date(),
@@ -73,14 +73,14 @@ class Bubbles extends React.Component {
       this.client.onmessage = (message) => {
         const data = JSON.parse(message.data);
         try {
-          if (data && data.message) this.generateBubble(data.message);
+          if (data && data.message) this.generateBall(data.message);
         } catch (error) {
           return;
         }
       };
       const { speed } = this.props;
       this.interval = setInterval(
-        () => !this.isMutating && this.transformBubbles(),
+        () => !this.isMutating && this.transformBalls(),
         100 - speed
       );
       this.refreshAverageInterval = setInterval(
@@ -100,7 +100,7 @@ class Bubbles extends React.Component {
   }
 
   componentDidUpdate(prevProps) {
-    const { width, bubbles } = this.state;
+    const { width, balls } = this.state;
     const refreshDivSizeAndBoundaries = () => {
       const width = this.container.current?.offsetWidth;
       const svgBoundingRect = this.container.current?.getBoundingClientRect();
@@ -122,16 +122,16 @@ class Bubbles extends React.Component {
     const { speed, showAll, largestTransactionAmount } = this.props;
     if (prevProps.speed !== speed) {
       clearInterval(this.interval);
-      this.interval = setInterval(() => this.transformBubbles(), 100 - speed);
+      this.interval = setInterval(() => this.transformBalls(), 100 - speed);
     }
 
-    //Clear bubbles under 1 NANO
+    //Clear balls under 1 NANO
     if (prevProps.showAll && !showAll) {
-      const updatedBubbles = [];
-      bubbles.forEach((bubble) => {
-        if (bubble.amount >= NANO_TO_RAW) updatedBubbles.push(bubble);
+      const updatedBalls = [];
+      balls.forEach((ball) => {
+        if (ball.amount >= NANO_TO_RAW) updatedBalls.push(ball);
       });
-      this.setState({ bubbles: updatedBubbles });
+      this.setState({ balls: updatedBalls });
     }
 
     //Set this.largestTransactionAmount
@@ -148,16 +148,16 @@ class Bubbles extends React.Component {
     });
   }
 
-  generateBubble(data) {
+  generateBall(data) {
     this.isMutating = true;
     const { showAll } = this.props;
-    const { bubbles } = this.state;
+    const { balls } = this.state;
     const amount = data.amount;
     if (!showAll && amount < NANO_TO_RAW) {
       this.isMutating = false;
       return;
     }
-    const newBubble = {
+    const newBall = {
       id: data.hash,
       subtype: data.block.subtype,
       x: this.generateXPos(),
@@ -170,48 +170,48 @@ class Bubbles extends React.Component {
       amount: amount,
       kill: false,
     };
-    bubbles.push(newBubble);
-    if (bubbles.length >= MAX_BUBBLES) {
-      let bubblesToKill = bubbles.length - MAX_BUBBLES;
-      bubbles.some((bubble, index) => {
-        if (!bubble.kill) {
-          bubbles[index].kill = true;
+    balls.push(newBall);
+    if (balls.length >= MAX_BALLS) {
+      let ballsToKill = balls.length - MAX_BALLS;
+      balls.some((ball, index) => {
+        if (!ball.kill) {
+          balls[index].kill = true;
         }
-        bubblesToKill -= 1;
-        if (bubblesToKill <= 0) return true;
+        ballsToKill -= 1;
+        if (ballsToKill <= 0) return true;
       });
     }
-    this.setState({ bubbles });
+    this.setState({ balls });
     this.isMutating = false;
   }
 
-  transformBubbles() {
+  transformBalls() {
     this.isMutating = true;
-    const { bubbles } = this.state;
-    const updatedBubbles = [...bubbles];
-    updatedBubbles.forEach((bubble, index) => {
-      const lifeTime = new Date().getTime() - bubble.createdAt.getTime();
-      if (lifeTime > LIFE_TIME || bubble.kill) {
-        bubble.r -= getRadiusIncrement(bubble.r, 0);
+    const { balls } = this.state;
+    const updatedBalls = [...balls];
+    updatedBalls.forEach((ball, index) => {
+      const lifeTime = new Date().getTime() - ball.createdAt.getTime();
+      if (lifeTime > LIFE_TIME || ball.kill) {
+        ball.r -= getRadiusIncrement(ball.r, 0);
       } else {
-        if (bubble.r < bubble.maxR) {
-          bubble.r += getRadiusIncrement(bubble.r, bubble.maxR);
+        if (ball.r < ball.maxR) {
+          ball.r += getRadiusIncrement(ball.r, ball.maxR);
         }
       }
-      if (bubble.r < -1) {
-        updatedBubbles.splice(index, 1);
+      if (ball.r < -1) {
+        updatedBalls.splice(index, 1);
       } else {
-        const newDirection = this.generateNewDirection(bubble);
+        const newDirection = this.generateNewDirection(ball);
         if (newDirection) {
-          bubble = { ...bubble, ...newDirection };
+          ball = { ...ball, ...newDirection };
         } else {
-          bubble.x += bubble.dX;
-          bubble.y += bubble.dY;
+          ball.x += ball.dX;
+          ball.y += ball.dY;
         }
-        updatedBubbles[index] = bubble;
+        updatedBalls[index] = ball;
       }
     });
-    this.setState({ bubbles: updatedBubbles });
+    this.setState({ balls: updatedBalls });
     this.isMutating = false;
   }
 
@@ -237,56 +237,56 @@ class Bubbles extends React.Component {
     return radius;
   }
 
-  generateNewDirection(bubble) {
+  generateNewDirection(ball) {
     const {
       boundaries: { top, right, bottom, left },
     } = this.state;
 
     if (
-      bubble.lastDirectionChangeTimestamp &&
-      new Date() - bubble.lastDirectionChangeTimestamp < 5000
+      ball.lastDirectionChangeTimestamp &&
+      new Date() - ball.lastDirectionChangeTimestamp < 5000
     )
       return false;
 
-    if (bubble.x - bubble.r <= left || bubble.x + bubble.r >= right)
+    if (ball.x - ball.r <= left || ball.x + ball.r >= right)
       return {
-        dX: -bubble.dX,
+        dX: -ball.dX,
         dY: getRandomDirection(),
         lastDirectionChangeTimestamp: new Date(),
       };
-    else if (bubble.y - bubble.r <= top || bubble.y + bubble.r >= bottom)
+    else if (ball.y - ball.r <= top || ball.y + ball.r >= bottom)
       return {
         dX: getRandomDirection(),
-        dY: -bubble.dY,
+        dY: -ball.dY,
         lastDirectionChangeTimestamp: new Date(),
       };
     else return false;
   }
 
-  renderBubbles() {
-    const { bubbles } = this.state;
-    return bubbles.map((bubble, index) => {
-      const lifeTime = new Date().getTime() - bubble.createdAt.getTime();
+  renderBalls() {
+    const { balls } = this.state;
+    return balls.map((ball, index) => {
+      const lifeTime = new Date().getTime() - ball.createdAt.getTime();
       if (lifeTime > 3000) {
-        bubble.r = bubble.r - 0.25;
-        bubbles[index] = bubble;
+        ball.r = ball.r - 0.25;
+        balls[index] = ball;
       }
-      if (bubble.r <= 0) {
-        bubbles.splice(index, 1);
+      if (ball.r <= 0) {
+        balls.splice(index, 1);
       }
-      if (bubble.r > 0)
+      if (ball.r > 0)
         return (
           <a
-            key={bubble.id}
-            href={`${BLOCK_EXPLORER_URL}${bubble.id}`}
+            key={ball.id}
+            href={`${BLOCK_EXPLORER_URL}${ball.id}`}
             target="_blank"
           >
             <circle
-              key={bubble.id}
-              r={bubble.r}
-              cx={bubble.x}
-              cy={bubble.y}
-              fill={bubble.subtype === "send" ? "#111456" : "#1e2396"}
+              key={ball.id}
+              r={ball.r}
+              cx={ball.x}
+              cy={ball.y}
+              fill={ball.subtype === "send" ? "#111456" : "#1e2396"}
               stroke={"#fff"}
               strokeWidth="2"
             ></circle>
@@ -296,15 +296,15 @@ class Bubbles extends React.Component {
   }
 
   render() {
-    const { width, height, bubbles } = this.state;
+    const { width, height, balls } = this.state;
     return (
-      <div className="bubbles" ref={this.container}>
+      <div className="balls" ref={this.container}>
         <svg width={width} height={height}>
-          {bubbles.length > 0 && this.renderBubbles()}
+          {balls.length > 0 && this.renderBalls()}
         </svg>
-        {bubbles.length <= 0 && <Loading text="Waiting for transactions" />}
+        {balls.length <= 0 && <Loading text="Waiting for transactions" />}
       </div>
     );
   }
 }
-export default Bubbles;
+export default Balls;

@@ -1,7 +1,7 @@
-import BubbleChart from "./BubbleChart";
-import Bubbles from "./Bubbles";
+import BallChart from "./BallChart";
+import Balls from "./Balls";
 import Info from "./Info";
 import RadioButton from "./RadioButton";
 import Loading from "./Loading.jsx";
 
-export { BubbleChart, Info, RadioButton, Bubbles, Loading };
+export { BallChart, Info, RadioButton, Balls, Loading };
