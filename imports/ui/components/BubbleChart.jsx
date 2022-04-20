@@ -176,7 +176,7 @@ class BubbleChart extends React.Component {
               alignmentBaseline="middle"
               fontSize={this.radiusScale(item.v) / 2.2}
             >
-              {`${numberWithCommas(Math.round(item.amountNano))}₦`}
+              {`${numberWithCommas(Math.round(item.amountNano))}Ӿ`}
             </text>
           </a>
         );
